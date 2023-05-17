@@ -5,7 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -46,19 +46,15 @@ public class ItemStorageInMemory implements ItemStorage {
                 .name(itemInDB.getName())
                 .description(itemInDB.getDescription())
                 .available(itemInDB.getAvailable())
-                .ownerId(itemInDB.getOwnerId())
+                .owner(itemInDB.getOwner())
                 .build();
     }
 
     @Override
     public List<Item> findAll(Long ownerId) {
-        List<Item> result = new ArrayList<>();
-        for (Item item : items.values()) {
-            if (item.getOwnerId().equals(ownerId)) {
-                result.add(item);
-            }
-        }
-        return result;
+        return items.values().stream()
+                .filter(item -> item.getOwner().getId().equals(ownerId))
+                .collect(Collectors.toList());
     }
 
     public List<Item> search(String subString) {
@@ -80,7 +76,7 @@ public class ItemStorageInMemory implements ItemStorage {
         if (!items.containsKey(id)) {
             String message = "There's no such item in our DataBase!";
             log.debug(message);
-            throw new NotFoundException(message);
+            throw new EntityNotFoundException(message);
         }
     }
 }

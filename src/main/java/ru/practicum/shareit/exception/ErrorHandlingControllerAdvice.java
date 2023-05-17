@@ -49,9 +49,9 @@ public class ErrorHandlingControllerAdvice {
         return new ErrorResponse(exception.getMessage());
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final NotFoundException exception) {
+    public ErrorResponse handleNotFoundException(final EntityNotFoundException exception) {
         return new ErrorResponse(exception.getMessage());
     }
 

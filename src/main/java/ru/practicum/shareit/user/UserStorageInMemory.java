@@ -6,13 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository("userStorageInMemory")
 @Slf4j
@@ -22,11 +19,13 @@ public class UserStorageInMemory implements UserStorage {
 
     final Map<Long, User> users = new HashMap<>();
     Long lastGeneratedId = 0L;
+    final Set<String> emails = new HashSet<>();
 
     @Override
     public User create(@Valid User user) {
         checkEmail(user.getEmail());
         user.setId(generateId());
+        emails.add(user.getEmail());
         users.put(user.getId(), user);
         return users.get(user.getId());
     }
@@ -34,8 +33,11 @@ public class UserStorageInMemory implements UserStorage {
     @Override
     public User update(@Valid User user) {
         checkId(user.getId());
-        if (!user.getEmail().equals(findUserById(user.getId()).getEmail())) {
+        String oldEmail = findUserById(user.getId()).getEmail();
+        if (!user.getEmail().equals(oldEmail)) {
             checkEmail(user.getEmail());
+            emails.remove(oldEmail);
+            emails.add(user.getEmail());
         }
         users.replace(user.getId(), user);
         return users.get(user.getId());
@@ -56,6 +58,7 @@ public class UserStorageInMemory implements UserStorage {
     @Override
     public void removeUser(Long id) {
         checkId(id);
+        emails.remove(users.get(id).getEmail());
         users.remove(id);
     }
 
@@ -64,12 +67,10 @@ public class UserStorageInMemory implements UserStorage {
     }
 
     private void checkEmail(String emailCheck) {
-        for (User user : users.values()) {
-            if (user.getEmail().equals(emailCheck)) {
-                String message = "Email " + emailCheck + " is already in use. Try another one.";
-                log.debug(message);
-                throw new ConflictException(message);
-            }
+        if (emails.contains(emailCheck)) {
+            String message = "Email " + emailCheck + " is already in use. Try another one.";
+            log.debug(message);
+            throw new ConflictException(message);
         }
     }
 
@@ -77,7 +78,7 @@ public class UserStorageInMemory implements UserStorage {
         if (!users.containsKey(id)) {
             String message = "There's no such user in our DataBase!";
             log.debug(message);
-            throw new NotFoundException(message);
+            throw new EntityNotFoundException(message);
         }
     }
 

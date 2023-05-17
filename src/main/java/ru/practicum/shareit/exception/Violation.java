@@ -1,13 +1,8 @@
 package ru.practicum.shareit.exception;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import lombok.Value;
 
-@Getter
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Value
 public class Violation {
 
     String fieldName;

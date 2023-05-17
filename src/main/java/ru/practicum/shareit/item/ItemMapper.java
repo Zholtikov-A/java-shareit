@@ -1,12 +1,17 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.user.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class ItemMapper {
+
+    private final UserMapper userMapper;
 
     public ItemDto toItemDto(Item item) {
         return ItemDto.builder()
@@ -14,7 +19,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .ownerId(item.getOwnerId())
+                .owner(userMapper.toUserDto(item.getOwner()))
                 .build();
     }
 
@@ -24,7 +29,7 @@ public class ItemMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
-                .ownerId(itemDto.getOwnerId())
+                .owner(userMapper.toUser(itemDto.getOwner()))
                 .build();
     }
 

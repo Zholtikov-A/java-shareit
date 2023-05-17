@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.request.ItemRequest;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import ru.practicum.shareit.user.User;
 
 @Data
 @Builder
@@ -15,13 +13,10 @@ import javax.validation.constraints.NotNull;
 public class Item {
 
     Long id;
-    @NotBlank
     String name;
-    @NotBlank
     String description;
-    @NotNull
     Boolean available;
-    Long ownerId;
+    User owner;
     ItemRequest request;
 
 }

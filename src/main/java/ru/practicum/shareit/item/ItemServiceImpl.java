@@ -6,6 +6,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exception.ForbiddenOperationException;
+import ru.practicum.shareit.user.UserDto;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserStorage;
 
 import javax.validation.Valid;
@@ -19,21 +21,23 @@ public class ItemServiceImpl implements ItemService {
     ItemStorage itemStorage;
     UserStorage userStorage;
     ItemMapper itemMapper;
+    UserMapper userMapper;
 
     public ItemDto create(Long ownerId, @Valid ItemDto itemDto) {
-        userStorage.findUserById(ownerId);
-        itemDto.setOwnerId(ownerId);
+
+        UserDto owner = userMapper.toUserDto(userStorage.findUserById(ownerId));
+        itemDto.setOwner(owner);
         Item item = itemMapper.toItem(itemDto);
         return itemMapper.toItemDto(itemStorage.create(item));
     }
 
     public ItemDto update(ItemDto itemDto, Long itemId, Long ownerId) {
-        userStorage.findUserById(ownerId);
+        UserDto owner = userMapper.toUserDto(userStorage.findUserById(ownerId));
         Item item = itemStorage.findItemById(itemId);
         itemDto.setId(itemId);
-        itemDto.setOwnerId(ownerId);
-        if (itemDto.getOwnerId() != null &&
-                !itemDto.getOwnerId().equals(item.getOwnerId())) {
+        itemDto.setOwner(owner);
+        if (itemDto.getOwner() != null &&
+                !itemDto.getOwner().getId().equals(item.getOwner().getId())) {
             throw new ForbiddenOperationException("Item can be changed only by it's owner!");
         }
 
