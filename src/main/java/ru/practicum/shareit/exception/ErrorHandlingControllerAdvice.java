@@ -55,6 +55,12 @@ public class ErrorHandlingControllerAdvice {
         return new ErrorResponse(exception.getMessage());
     }
 
+    @ExceptionHandler(AccessDeniedWith404Exception.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedWith404Exception(final AccessDeniedWith404Exception exception) {
+        return new ErrorResponse(exception.getMessage());
+    }
+
     @ExceptionHandler(ForbiddenOperationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenOperationException(final ForbiddenOperationException exception) {

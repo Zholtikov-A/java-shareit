@@ -8,9 +8,11 @@ public interface ItemService {
 
     ItemDto update(ItemDto itemDto, Long itemId, Long ownerId);
 
-    ItemDto findItemById(Long itemId);
+    ItemBookingCommentDto findItemById(Long userId, Long itemId);
 
-    List<ItemDto> findAll(Long ownerId);
+    List<ItemBookingCommentDto> findOwnerItems(Long userId);
 
     List<ItemDto> search(String subString);
+
+    CommentDtoOutput addComment(Long userId, Long itemId, CommentDtoInput dtoInput);
 }
