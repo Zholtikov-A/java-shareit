@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,12 +30,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOutput create(BookingDtoInput bookingDto, Long bookerId) {
-
-        Optional<Item> itemOptional = itemRepository.findById(bookingDto.getItemId());
-        if (itemOptional.isEmpty()) {
-            throw new EntityNotFoundException("Not found: item's id " + bookingDto.getItemId());
-        }
-        Item item = itemOptional.get();
+        Item item = itemRepository.findById(bookingDto.getItemId())
+                .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + bookingDto.getItemId()));
         if (item.getOwner().getId().equals(bookerId)) {
             throw new AccessDeniedWith404Exception("User with id " + bookerId + " is owner of the item with id " + item.getId());
         }
@@ -47,12 +42,8 @@ public class BookingServiceImpl implements BookingService {
         if ((bookingDto.getEnd().isBefore(bookingDto.getStart())) || bookingDto.getEnd().equals(bookingDto.getStart())) {
             throw new ValidationExceptionCustom("Booking end time can't be before or at same time then start time");
         }
-        Optional<User> bookerOptional = userRepository.findById(bookerId);
-        if (bookerOptional.isEmpty()) {
-            throw new EntityNotFoundException("Not found: booker's id " + bookerId);
-        }
-        User booker = bookerOptional.get();
-
+        User booker = userRepository.findById(bookerId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: booker's id " + bookerId));
         Booking booking = bookingMapper.toBooking(bookingDto, booker, item);
         booking.setStatus(BookingStatus.WAITING);
         return bookingMapper.toBookingDto(bookingRepository.save(booking));
@@ -60,11 +51,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOutput setApprove(Long bookingId, boolean approved, Long userId) {
-        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (bookingOptional.isEmpty()) {
-            throw new EntityNotFoundException("Not found: booking's id " + bookingId);
-        }
-        Booking booking = bookingOptional.get();
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: booking's id " + bookingId));
         if ((booking.getStatus() == BookingStatus.APPROVED && approved)
                 || (booking.getStatus() == BookingStatus.REJECTED && !approved)) {
             throw new ValidationExceptionCustom("Booking status is already set");
@@ -81,11 +69,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOutput getBookingById(Long bookingId, Long userId) {
-        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (bookingOptional.isEmpty()) {
-            throw new EntityNotFoundException("Not found: booking's id " + bookingId);
-        }
-        Booking booking = bookingOptional.get();
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: booking's id " + bookingId));
         Item item = booking.getItem();
         if (booking.getBooker().getId().equals(userId) || item.getOwner().getId().equals(userId)) {
             return bookingMapper.toBookingDto(booking);
@@ -96,10 +81,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOutput> getUserBookings(Long userId, String state) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("Not found: user's id " + userId);
-        }
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user's id " + userId));
         List<Booking> bookings;
         BookingSearchState bookingSearchState;
         try {
@@ -135,10 +118,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOutput> getAllUserItemsBookings(long userId, String state) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("Not found: user's id " + userId);
-        }
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user's id " + userId));
         List<Long> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId)
                 .stream()
                 .map(Item::getId)

@@ -19,15 +19,6 @@ public class ItemDto {
     public interface Create {
     }
 
-    public interface New {
-    }
-
-    public interface Exist {
-    }
-
-    public interface Update extends Exist {
-    }
-
     Long id;
     @NotBlank(groups = {Create.class})
     String name;

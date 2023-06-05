@@ -47,54 +47,41 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemDto update(ItemDto itemDto, Long itemId, Long ownerId) {
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isPresent()) {
-            Optional<User> optionalOwner = userRepository.findById(ownerId);
-            if (optionalOwner.isEmpty()) {
-                throw new EntityNotFoundException("Not found: owner id: " + ownerId);
-            }
-            Item item = optionalItem.get();
-            User owner = optionalOwner.get();
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
+        userRepository.findById(ownerId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: owner id: " + ownerId));
+        itemDto.setId(itemId);
 
-            itemDto.setId(itemId);
-
-            if (item.getOwner() != null &&
-                    !item.getOwner().getId().equals(ownerId)) {
-                throw new ForbiddenOperationException("Item can be changed only by it's owner!");
-            }
-
-            if (itemDto.getName() != null &&
-                    !itemDto.getName().equals(item.getName())) {
-                item.setName(itemDto.getName());
-            }
-            if (itemDto.getDescription() != null &&
-                    !itemDto.getDescription().equals(item.getDescription())) {
-                item.setDescription(itemDto.getDescription());
-            }
-            if (itemDto.getAvailable() != null &&
-                    !itemDto.getAvailable().equals(item.getAvailable())) {
-                item.setAvailable(itemDto.getAvailable());
-            }
-            return itemMapper.toItemDto(itemRepository.save(item));
-        } else {
-            throw new EntityNotFoundException("Not found: item id " + itemDto.getId());
+        if (item.getOwner() != null &&
+                !item.getOwner().getId().equals(ownerId)) {
+            throw new ForbiddenOperationException("Item can be changed only by it's owner!");
         }
+
+        if (itemDto.getName() != null &&
+                !itemDto.getName().equals(item.getName())) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null &&
+                !itemDto.getDescription().equals(item.getDescription())) {
+            item.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null &&
+                !itemDto.getAvailable().equals(item.getAvailable())) {
+            item.setAvailable(itemDto.getAvailable());
+        }
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
 
     @Override
     public ItemBookingCommentDto findItemById(Long userId, Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
 
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new EntityNotFoundException("Not found: item id " + itemId);
-        }
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("Not found: owner id: " + userId);
-        }
-        Item item = optionalItem.get();
-        List<CommentDtoOutput> itemComments = commentMapper.commentDtoList(commentRepository.findAllByItem(itemId));
+        List<CommentDtoOutput> itemComments = commentMapper.commentDtoList(commentRepository.findAllByItemId(itemId));
         ItemBookingCommentDto itemDto = itemMapper.toItemDtoBookingComment(item);
         itemDto.setComments(itemComments);
         if (item.getOwner().getId().equals(userId)) {
@@ -122,11 +109,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemBookingCommentDto> findOwnerItems(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("Not found: user id: " + userId);
-        }
-
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
         List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
         if (userItems.isEmpty()) {
             return new ArrayList<ItemBookingCommentDto>();
@@ -160,18 +144,6 @@ public class ItemServiceImpl implements ItemService {
             }
         }
         return dtoItems;
-        //полностью через стрим сделать не получается, если до .get ничего не доходит - вылетает с ошибкой
-        /*return dtoItems.stream()
-                .peek(item -> item.setLastBooking(bookings.stream()
-                        .filter(booking -> booking.getItem().getId().equals(item.getId()))
-                        .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                        .findFirst().map(bookingMapper::toBookingDtoForItemHost).get()))
-                .peek(item -> item.setNextBooking(bookings.stream()
-                        .filter(booking -> booking.getItem().getId().equals(item.getId()))
-                        .filter(x -> x.getStart().isAfter(LocalDateTime.now()))
-                        .min(Comparator.comparing(Booking::getStart))
-                        .map(bookingMapper::toBookingDtoForItemHost).get()))
-                .collect(Collectors.toList());*/
     }
 
     public List<ItemDto> search(String text) {
@@ -185,17 +157,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDtoOutput addComment(Long userId, Long itemId, CommentDtoInput dtoInput) {
 
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new EntityNotFoundException("Not found: item id " + itemId);
-        }
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("Not found: user id: " + userId);
-        }
-        Item item = optionalItem.get();
-        User user = optionalUser.get();
-
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
         List<Booking> booking = bookingRepository.findAllByBookerIdAndItemIdAndEndBefore(itemId, userId, LocalDateTime.now());
 
         if (booking.isEmpty()) {

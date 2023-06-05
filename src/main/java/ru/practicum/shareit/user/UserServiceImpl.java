@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,20 +21,18 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto update(UserDto userDto) {
-        Optional<User> userOptional = userRepository.findById(userDto.getId());
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (userDto.getName() != null && !userDto.getName().equals(user.getName())) {
-                user.setName(userDto.getName());
-            }
-            if (userDto.getEmail() != null && !userDto.getEmail().equals(user.getEmail())) {
-                user.setEmail(userDto.getEmail());
-            }
-            user = userRepository.save(user);
-            return userMapper.toUserDto(user);
-        } else {
-            throw new EntityNotFoundException("Not found: user by id " + userDto.getId());
+
+        User user = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userDto.getId()));
+        if (userDto.getName() != null && !userDto.getName().equals(user.getName())) {
+            user.setName(userDto.getName());
         }
+        if (userDto.getEmail() != null && !userDto.getEmail().equals(user.getEmail())) {
+            user.setEmail(userDto.getEmail());
+        }
+        user = userRepository.save(user);
+        return userMapper.toUserDto(user);
+
     }
 
     public List<UserDto> findAll() {
@@ -44,20 +41,14 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto findUserById(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            return userMapper.toUserDto(userOptional.get());
-        } else {
-            throw new EntityNotFoundException("Not found: user by id " + id);
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + id));
+        return userMapper.toUserDto(user);
     }
 
     public void removeUser(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            userRepository.delete(optionalUser.get());
-        } else {
-            throw new EntityNotFoundException("Not found: user by id " + id);
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + id));
+        userRepository.delete(user);
     }
 }
