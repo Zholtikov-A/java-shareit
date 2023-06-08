@@ -2,8 +2,8 @@ package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
@@ -17,18 +17,14 @@ public class UserMapper {
     }
 
     public User toUser(UserDto userDto) {
-        return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .email(userDto.getEmail())
-                .build();
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        return user;
     }
 
     public List<UserDto> userDtoList(List<User> users) {
-        List<UserDto> dtos = new ArrayList<>();
-        for (User user : users) {
-            dtos.add(toUserDto(user));
-        }
-        return dtos;
+        return users.stream().map(this::toUserDto).collect(Collectors.toList());
     }
 }
