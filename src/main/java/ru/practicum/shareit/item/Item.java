@@ -34,9 +34,7 @@ public class Item {
     @ToString.Exclude
     User owner;
 
-
     @OneToOne
-    @Transient
     ItemRequest request;
 
 }

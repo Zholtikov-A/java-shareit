@@ -10,9 +10,9 @@ public interface ItemService {
 
     ItemBookingCommentDto findItemById(Long userId, Long itemId);
 
-    List<ItemBookingCommentDto> findOwnerItems(Long userId);
+    List<ItemBookingCommentDto> findOwnerItems(Long userId, Integer from, Integer size);
 
-    List<ItemDto> search(String subString);
+    List<ItemDto> search(String subString, Integer from, Integer size);
 
     CommentDtoOutput addComment(Long userId, Long itemId, CommentDtoInput dtoInput);
 }

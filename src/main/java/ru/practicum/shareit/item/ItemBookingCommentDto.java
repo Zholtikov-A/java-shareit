@@ -1,24 +1,26 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.BookingDtoForItemOwner;
 
 import java.util.List;
 
 @Data
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemBookingCommentDto {
-    private Long id;
+    Long id;
 
-    private String name;
+    String name;
 
-    private String description;
+    String description;
 
-    private Boolean available;
+    Boolean available;
 
-    private BookingDtoForItemOwner lastBooking;
+    BookingDtoForItemOwner lastBooking;
 
-    private BookingDtoForItemOwner nextBooking;
+    BookingDtoForItemOwner nextBooking;
 
-    private List<CommentDtoOutput> comments;
+    List<CommentDtoOutput> comments;
 }

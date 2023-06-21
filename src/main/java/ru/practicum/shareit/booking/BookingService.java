@@ -7,9 +7,12 @@ public interface BookingService {
 
     BookingDtoOutput setApprove(Long bookingId, boolean approved, Long userId);
 
-    BookingDtoOutput getBookingById(Long bookingId, Long userId);
+    BookingDtoOutput findById(Long bookingId, Long userId);
 
-    List<BookingDtoOutput> getUserBookings(Long userId, String state);
+    List<BookingDtoOutput> getUserBookings(Long userId, String state, Integer from, Integer size);
 
-    List<BookingDtoOutput> getAllUserItemsBookings(long userId, String state);
+    List<BookingDtoOutput> findAllByOwner(Long userId, String state, Integer from, Integer size);
+
+    // List<BookingDtoOutput> findAll(Long userId, Integer from, Integer size);
+
 }

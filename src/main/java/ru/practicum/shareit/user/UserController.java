@@ -10,6 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
     private final UserService userService;
 
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void removeUser(@PathVariable Long id) {
+    public void removeUser(@PathVariable @Positive Long id) {
         userService.removeUser(id);
     }
 }

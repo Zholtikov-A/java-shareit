@@ -1,18 +1,20 @@
 package ru.practicum.shareit.item;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
 @Getter
-@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
-public class ItemDto {
+public class ItemResponseDto {
 
     public interface Create {
     }
@@ -25,6 +27,6 @@ public class ItemDto {
 
     @NotNull(groups = {Create.class})
     Boolean available;
-
     Long requestId;
+
 }

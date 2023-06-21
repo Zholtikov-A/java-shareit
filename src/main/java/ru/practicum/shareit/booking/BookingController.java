@@ -3,15 +3,18 @@ package ru.practicum.shareit.booking;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @Data
 @RequestMapping(path = "/bookings")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Validated
 public class BookingController {
 
     BookingService bookingService;
@@ -32,21 +35,26 @@ public class BookingController {
     @GetMapping("/{id}")
     public BookingDtoOutput getBookingById(@PathVariable("id") Long bookingId,
                                            @RequestHeader(HEADER_SHARER) Long userId) {
-        return bookingService.getBookingById(bookingId, userId);
+        return bookingService.findById(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDtoOutput> getUserBookings(@RequestHeader(HEADER_SHARER) Long userId,
+                                                  @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                                  @RequestParam(value = "size", defaultValue = "10") @PositiveOrZero Integer size,
                                                   @RequestParam(value = "state", required = false, defaultValue = "ALL")
                                                   String state) {
-        return bookingService.getUserBookings(userId, state);
+        return bookingService.getUserBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoOutput> getAllUserItemsBookings(@RequestHeader(HEADER_SHARER) long userId,
-                                                          @RequestParam(value = "state", required = false, defaultValue = "ALL")
-                                                          String state) {
-        return bookingService.getAllUserItemsBookings(userId, state);
+    public List<BookingDtoOutput> findAllByOwner(@RequestHeader(HEADER_SHARER) Long userId,
+                                                 @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                                 @RequestParam(value = "size", defaultValue = "10") @PositiveOrZero Integer size,
+                                                 @RequestParam(value = "state", required = false, defaultValue = "ALL")
+                                                 String state) {
+        return bookingService.findAllByOwner(userId, state, from, size);
     }
+
 
 }
