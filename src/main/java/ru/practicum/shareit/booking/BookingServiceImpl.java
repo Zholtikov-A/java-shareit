@@ -124,11 +124,6 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDtoOutput> findAllByOwner(Long ownerId, String state, Integer from, Integer size) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: user's id " + ownerId));
-
-
-        Pageable itemParams = PageRequest.of(from, size, Sort.by("id"));
-
-
         BookingSearchState bookingSearchState;
         try {
             bookingSearchState = BookingSearchState.valueOf(state);

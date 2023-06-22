@@ -117,8 +117,7 @@ class ItemRequestControllerTest {
 
         mockMvc.perform(get("/requests/?from=0&size=0")
                         .header("X-Sharer-User-Id", requester.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -146,8 +145,7 @@ class ItemRequestControllerTest {
 
         mockMvc.perform(get("/requests/all?from=0&size=0")
                         .header("X-Sharer-User-Id", requester.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(status().isBadRequest());
     }
 
     @Test

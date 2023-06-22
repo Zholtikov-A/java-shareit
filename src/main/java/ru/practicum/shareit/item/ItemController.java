@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -42,14 +43,14 @@ public class ItemController {
     @GetMapping
     public List<ItemBookingCommentDto> findAll(@RequestHeader(HEADER_SHARER) Long ownerId,
                                                @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                               @RequestParam(value = "size", defaultValue = "20") @PositiveOrZero Integer size) {
+                                               @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
         return itemService.findOwnerItems(ownerId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam("text") String subString,
                                 @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                @RequestParam(value = "size", defaultValue = "20") @PositiveOrZero Integer size) {
+                                @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
         return itemService.search(subString, from, size);
     }
 

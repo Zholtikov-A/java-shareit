@@ -29,14 +29,14 @@ public class ItemRequestController {
     @GetMapping
     public List<ItemRequestDtoOutput> findUserRequests(@RequestHeader(HEADER_SHARER) Long userId,
                                                        @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                                       @RequestParam(value = "size", defaultValue = "20") @PositiveOrZero Integer size) {
+                                                       @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
         return itemRequestService.findUserRequests(userId, from, size);
     }
 
     @GetMapping("/all")
     public List<ItemRequestDtoOutput> findAll(@RequestHeader(HEADER_SHARER) Long requesterId,
                                               @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                              @RequestParam(value = "size", defaultValue = "20") @PositiveOrZero Integer size) {
+                                              @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
         return itemRequestService.findAll(requesterId, from, size);
 
     }

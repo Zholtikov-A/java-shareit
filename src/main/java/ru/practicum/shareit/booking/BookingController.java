@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoOutput> getUserBookings(@RequestHeader(HEADER_SHARER) Long userId,
                                                   @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                                  @RequestParam(value = "size", defaultValue = "10") @PositiveOrZero Integer size,
+                                                  @RequestParam(value = "size", defaultValue = "10") @Positive Integer size,
                                                   @RequestParam(value = "state", required = false, defaultValue = "ALL")
                                                   String state) {
         return bookingService.getUserBookings(userId, state, from, size);
@@ -50,7 +51,7 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDtoOutput> findAllByOwner(@RequestHeader(HEADER_SHARER) Long userId,
                                                  @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                                 @RequestParam(value = "size", defaultValue = "10") @PositiveOrZero Integer size,
+                                                 @RequestParam(value = "size", defaultValue = "10") @Positive Integer size,
                                                  @RequestParam(value = "state", required = false, defaultValue = "ALL")
                                                  String state) {
         return bookingService.findAllByOwner(userId, state, from, size);

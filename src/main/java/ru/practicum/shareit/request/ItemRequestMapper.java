@@ -2,6 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.annotations.Generated;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingDtoInput;
 import ru.practicum.shareit.item.Item;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Generated
 @Component
 @RequiredArgsConstructor
 public class ItemRequestMapper {

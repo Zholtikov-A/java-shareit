@@ -400,6 +400,72 @@ class ItemServiceImplTest {
     }
 
     @Test
+    public void findItemByIdByOwnerSuccessfulWithoutBookings() {
+
+        Mockito.when(userRepository
+                        .findById(anyLong()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(bookingRepository
+                        .findByItemId(anyLong()))
+                .thenReturn(List.of());
+
+        Mockito.when(itemRepository
+                        .findById(anyLong()))
+                .thenReturn(Optional.of(item));
+
+        Mockito.when(commentRepository
+                        .findAllByItemId(anyLong()))
+                .thenReturn(new ArrayList<>());
+
+        Mockito.when(commentMapper
+                        .commentDtoList(anyList()))
+                .thenReturn(new ArrayList<>());
+
+        Mockito.when(itemMapper
+                        .toItemDtoBookingComment(item))
+                .thenReturn(itemBookingCommentDto);
+
+
+        ItemBookingCommentDto returnedItemDto = itemService.findItemById(owner.getId(), item.getId());
+
+        assertNotNull(returnedItemDto);
+    }
+
+    @Test
+    public void findItemByIdByOwnerSuccessfulWithoutNextBooking() {
+
+        Mockito.when(userRepository
+                        .findById(anyLong()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(bookingRepository
+                        .findByItemId(anyLong()))
+                .thenReturn(List.of(lastBooking));
+
+        Mockito.when(itemRepository
+                        .findById(anyLong()))
+                .thenReturn(Optional.of(item));
+
+        Mockito.when(commentRepository
+                        .findAllByItemId(anyLong()))
+                .thenReturn(new ArrayList<>());
+
+        Mockito.when(commentMapper
+                        .commentDtoList(anyList()))
+                .thenReturn(new ArrayList<>());
+
+        Mockito.when(itemMapper
+                        .toItemDtoBookingComment(item))
+                .thenReturn(itemBookingCommentDto);
+
+
+        ItemBookingCommentDto returnedItemDto = itemService.findItemById(owner.getId(), item.getId());
+
+        assertNotNull(returnedItemDto);
+    }
+
+    @Test
     public void findItemByIdFailItemNotFound() {
 
         assertThrows(EntityNotFoundException.class,
@@ -446,6 +512,36 @@ class ItemServiceImplTest {
 
         assertNotNull(returnedItemDto.get(0));
         assertEquals(itemBookingCommentDto, returnedItemDto.get(0));
+    }
+
+    @Test
+    public void findOwnerItemsSuccessfulWithoutNextBooking() {
+        Integer from = 0;
+        Integer size = 4;
+
+        Mockito.when(userRepository
+                        .findById(anyLong()))
+                .thenReturn(Optional.of(owner));
+
+        Mockito.when(itemRepository
+                        .findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
+                .thenReturn(List.of(item));
+
+        Mockito.when(bookingRepository
+                        .findByItemIdList(anyList()))
+                .thenReturn(List.of(lastBooking));
+
+        Mockito.when(itemMapper
+                        .toItemDtoBookingCommentList(anyList()))
+                .thenReturn(List.of(itemBookingCommentDto));
+
+        Mockito.when(bookingMapper
+                        .toBookingDtoForItemHost(any()))
+                .thenReturn(bookingDtoForItemOwner);
+
+        List<ItemBookingCommentDto> returnedItemDto = itemService.findOwnerItems(owner.getId(), from, size);
+
+        assertNotNull(returnedItemDto.get(0));
     }
 
     @Test

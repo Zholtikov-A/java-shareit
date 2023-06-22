@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Generated
 @Data
 @Getter
 @Setter
@@ -28,3 +29,4 @@ public class ItemDto {
 
     Long requestId;
 }
+
