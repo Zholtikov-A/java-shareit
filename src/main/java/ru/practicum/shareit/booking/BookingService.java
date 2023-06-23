@@ -13,6 +13,4 @@ public interface BookingService {
 
     List<BookingDtoOutput> findAllByOwner(Long userId, String state, Integer from, Integer size);
 
-    // List<BookingDtoOutput> findAll(Long userId, Integer from, Integer size);
-
 }

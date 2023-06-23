@@ -1,8 +1,6 @@
 package ru.practicum.shareit.request;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.User;
 
@@ -10,7 +8,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "requests", schema = "shareit")
 @FieldDefaults(level = AccessLevel.PRIVATE)

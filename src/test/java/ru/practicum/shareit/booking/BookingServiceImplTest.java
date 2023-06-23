@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.annotation.DirtiesContext;
 
-import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.exception.AccessDeniedWith404Exception;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.exception.ValidationExceptionCustom;
@@ -21,7 +20,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserRepository;
 
-
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -31,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-
 
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -322,7 +319,8 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForBookerAllSuccess() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
         when(bookingRepository.findAllBookingsByUserId(anyLong(), any())).thenReturn(bookingPage);
 
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
@@ -333,7 +331,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForBookerCURRENTSuccess() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByUserIdCurrent(anyLong(), any(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.getUserBookings(booker.getId(), "CURRENT", 0, 3);
@@ -342,7 +340,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForBookerPASTSuccess() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByUserIdPast(anyLong(), any(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.getUserBookings(booker.getId(), "PAST", 0, 3);
@@ -351,7 +349,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForBookerFUTURESuccess() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByUserIdFuture(anyLong(), any(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.getUserBookings(booker.getId(), "FUTURE", 0, 3);
@@ -360,7 +358,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForBookerWAITINGSuccess() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByUserIdWaiting(anyLong(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.getUserBookings(booker.getId(), "WAITING", 0, 3);
@@ -369,7 +367,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForBookerREJECTEDSuccess() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByUserIdRejected(anyLong(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.getUserBookings(booker.getId(), "REJECTED", 0, 3);
@@ -378,7 +376,7 @@ class BookingServiceImplTest {
 
     @Test
     public void failFindAllForBookerUnknownState() {
-        when(userRepository.findById(booker.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
 
         assertThrows(ValidationExceptionCustom.class,
                 () -> bookingService.getUserBookings(booker.getId(), "WRONG", 0, 3));
@@ -386,7 +384,7 @@ class BookingServiceImplTest {
 
     @Test
     public void failFindAllForOwnerUnknownState() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserBooker);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
 
         assertThrows(ValidationExceptionCustom.class,
                 () -> bookingService.findAllByOwner(owner.getId(), "WRONG", 0, 3));
@@ -394,7 +392,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForOwnerALLSuccess() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserOwner);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByOwnerId(anyLong(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.findAllByOwner(owner.getId(), "ALL", 0, 3);
@@ -403,7 +401,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForOwnerCURRENTSuccess() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserOwner);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByOwnerIdCurrent(anyLong(), any(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.findAllByOwner(owner.getId(), "CURRENT", 0, 3);
@@ -412,7 +410,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForOwnerPASTSuccess() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserOwner);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByOwnerIdPast(anyLong(), any(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.findAllByOwner(owner.getId(), "PAST", 0, 3);
@@ -421,7 +419,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForOwnerFUTURESuccess() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserOwner);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByOwnerIdFuture(anyLong(), any(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.findAllByOwner(owner.getId(), "FUTURE", 0, 3);
@@ -430,7 +428,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForOwnerWAITINGSuccess() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserOwner);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByOwnerIdWaiting(anyLong(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.findAllByOwner(owner.getId(), "WAITING", 0, 3);
@@ -439,7 +437,7 @@ class BookingServiceImplTest {
 
     @Test
     public void findAllForOwnerREJECTEDSuccess() {
-        when(userRepository.findById(owner.getId())).thenReturn(optionalUserOwner);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findAllBookingsByOwnerIdRejected(anyLong(), any())).thenReturn(bookingPage);
         when(bookingMapper.bookingDtoList(bookingPage)).thenReturn(bookingsDto);
         List<BookingDtoOutput> output = bookingService.findAllByOwner(owner.getId(), "REJECTED", 0, 3);

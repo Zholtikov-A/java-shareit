@@ -86,8 +86,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOutput> getUserBookings(Long userId, String state, Integer from, Integer size) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user's id " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
         BookingSearchState bookingSearchState;
         try {
             bookingSearchState = BookingSearchState.valueOf(state);
@@ -122,8 +123,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOutput> findAllByOwner(Long ownerId, String state, Integer from, Integer size) {
-        userRepository.findById(ownerId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user's id " + ownerId));
+        if (!userRepository.existsById(ownerId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + ownerId));
+        }
         BookingSearchState bookingSearchState;
         try {
             bookingSearchState = BookingSearchState.valueOf(state);
@@ -155,7 +157,6 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookings;
     }
-
 
 }
 

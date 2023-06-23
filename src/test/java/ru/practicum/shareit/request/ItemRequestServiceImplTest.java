@@ -151,8 +151,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     public void findAllForRequesterSuccess() {
-        when(userRepository.findById(anyLong())).thenReturn(requesterUserOpt);
-
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findAllByRequesterId(anyLong(), any())).thenReturn(List.of(requestModel));
         when(itemRequestMapper.toItemRequestDtoList(anyList())).thenReturn(List.of(requestDtoOutput));
         when(itemRepository.findAllByRequestIdList(anyList())).thenReturn(List.of(item));
@@ -164,8 +163,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     public void findAllForRequesterSuccessWithNoItems() {
-        when(userRepository.findById(anyLong())).thenReturn(requesterUserOpt);
-
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findAllByRequesterId(anyLong(), any())).thenReturn(List.of(requestModel));
         when(itemRequestMapper.toItemRequestDtoList(anyList())).thenReturn(List.of(requestDtoOutput));
         when(itemRepository.findAllByRequestIdList(anyList())).thenReturn(List.of());
@@ -194,7 +192,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     public void findItemRequestByIdSuccess() {
-        when(userRepository.findById(anyLong())).thenReturn(requesterUserOpt);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findById(anyLong())).thenReturn(requestOpt);
         when(itemRequestMapper.toItemRequestDto(any())).thenReturn(requestDtoOutput);
 
@@ -207,7 +205,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     public void findItemRequestByIdSuccessWithNoItems() {
-        when(userRepository.findById(anyLong())).thenReturn(requesterUserOpt);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findById(anyLong())).thenReturn(requestOpt);
         when(itemRequestMapper.toItemRequestDto(any())).thenReturn(requestDtoOutput);
 
@@ -226,7 +224,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     public void findItemRequestByIdFailRequestNotFound() {
-        when(userRepository.findById(anyLong())).thenReturn(requesterUserOpt);
+        when(userRepository.existsById(anyLong())).thenReturn(true);;
         assertThrows(EntityNotFoundException.class,
                 () -> itemRequestService.findItemRequestById(requesterDto.getId(), 1L));
     }

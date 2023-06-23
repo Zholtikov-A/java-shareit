@@ -22,7 +22,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@RequestHeader(HEADER_SHARER) Long ownerId,
-                          @Validated(ItemDto.Create.class) @RequestBody ItemDto itemDto) {
+                          @Validated @RequestBody ItemDto itemDto) {
         return itemService.create(ownerId, itemDto);
     }
 

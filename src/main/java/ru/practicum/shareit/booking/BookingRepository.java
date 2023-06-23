@@ -25,7 +25,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             "b.status = 'APPROVED' ")
     List<Booking> findByItemIdList(List<Long> itemIdList);
 
-    // ALL COMPLETED BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -36,7 +35,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllCompletedBookingsByBookerIdAndItemId(Long bookerId, Long itemId, LocalDateTime now);
 
-    // ALL BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -45,7 +43,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByUserId(Long userId, Pageable pageable);
 
-    // CURRENT BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -56,7 +53,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByUserIdCurrent(Long userId, LocalDateTime now, Pageable pageable);
 
-    // PAST BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -66,7 +62,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByUserIdPast(Long userId, LocalDateTime now, Pageable pageable);
 
-    // FUTURE BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -76,7 +71,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByUserIdFuture(Long userId, LocalDateTime now, Pageable pageable);
 
-    // WAITING BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -86,7 +80,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByUserIdWaiting(Long userId, Pageable pageable);
 
-    // REJECTED BY_BOOKER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.booker as booker" +
@@ -96,7 +89,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByUserIdRejected(Long userId, Pageable pageable);
 
-    // ALL BY_OWNER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.item as i" +
@@ -105,7 +97,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByOwnerId(Long userId, Pageable pageable);
 
-    // CURRENT BY_OWNER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.item as i" +
@@ -116,7 +107,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByOwnerIdCurrent(Long userId, LocalDateTime now, Pageable pageable);
 
-    // PAST BY_OWNER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.item as i" +
@@ -126,7 +116,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByOwnerIdPast(Long userId, LocalDateTime now, Pageable pageable);
 
-    // FUTURE BY_OWNER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.item as i" +
@@ -136,7 +125,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByOwnerIdFuture(Long userId, LocalDateTime now, Pageable pageable);
 
-    // WAITING BY_OWNER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.item as i" +
@@ -146,7 +134,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
             " ORDER BY b.start DESC")
     List<Booking> findAllBookingsByOwnerIdWaiting(Long userId, Pageable pageable);
 
-    // REJECTED BY_OWNER
     @Query(value = "SELECT b" +
             " FROM Booking as b" +
             " JOIN b.item as i" +

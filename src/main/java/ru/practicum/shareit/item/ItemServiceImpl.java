@@ -56,8 +56,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemDto update(ItemDto itemDto, Long itemId, Long ownerId) {
-        userRepository.findById(ownerId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: owner id: " + ownerId));
+        if (!userRepository.existsById(ownerId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + ownerId));
+        }
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
         itemDto.setId(itemId);
@@ -87,8 +88,9 @@ public class ItemServiceImpl implements ItemService {
     public ItemBookingCommentDto findItemById(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
 
         List<CommentDtoOutput> itemComments = commentMapper.commentDtoList(commentRepository.findAllByItemId(itemId));
         ItemBookingCommentDto itemDto = itemMapper.toItemDtoBookingComment(item);
@@ -118,8 +120,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemBookingCommentDto> findOwnerItems(Long userId, Integer from, Integer size) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
         int page = from / size;
         Pageable params = PageRequest.of(page, size, Sort.by("id"));
 
@@ -177,7 +180,8 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
-        List<Booking> booking = bookingRepository.findAllCompletedBookingsByBookerIdAndItemId(userId, itemId, LocalDateTime.now());
+        List<Booking> booking = bookingRepository.findAllCompletedBookingsByBookerIdAndItemId(
+                userId, itemId, LocalDateTime.now());
 
         if (booking.isEmpty()) {
             throw new ValidationExceptionCustom("User hasn't booked this item");

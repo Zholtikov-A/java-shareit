@@ -1,8 +1,6 @@
 package ru.practicum.shareit.request;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +11,11 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Validated
 public class ItemRequestController {
 
     private static final String HEADER_SHARER = "X-Sharer-User-Id";
-    ItemRequestService itemRequestService;
+    private final ItemRequestService itemRequestService;
 
     @PostMapping
     public ItemRequestDtoOutput create(@RequestHeader(HEADER_SHARER) Long requesterId,

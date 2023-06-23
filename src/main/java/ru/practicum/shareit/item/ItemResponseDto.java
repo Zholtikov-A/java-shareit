@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -16,16 +15,12 @@ import javax.validation.constraints.NotNull;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemResponseDto {
 
-    public interface Create {
-    }
-
     Long id;
-    @NotBlank(groups = {Create.class})
+    @NotBlank
     String name;
-    @NotBlank(groups = {Create.class})
+    @NotBlank
     String description;
-
-    @NotNull(groups = {Create.class})
+    @NotNull
     Boolean available;
     Long requestId;
 

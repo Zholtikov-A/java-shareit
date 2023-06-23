@@ -40,8 +40,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDtoOutput> findUserRequests(Long userId, Integer from, Integer size) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
         int page = from / size;
         Pageable params = PageRequest.of(page, size, Sort.by("created"));
         List<ItemRequest> requests = itemRequestRepository.findAllByRequesterId(userId, params);
@@ -58,9 +59,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDtoOutput findItemRequestById(Long userId, Long requestId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
-
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: request id: " + requestId));
         ItemRequestDtoOutput dtoRequest = itemRequestMapper.toItemRequestDto(itemRequest);
@@ -97,6 +98,4 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                         .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
-
-
 }

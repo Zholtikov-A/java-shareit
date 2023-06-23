@@ -156,14 +156,14 @@ class ItemServiceImplTest {
     @Test
     public void createSuccessful() {
 
-        Mockito.when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
 
 
-        Mockito.when(itemRepository.save(any()))
+        when(itemRepository.save(any()))
                 .thenReturn(item);
 
-        Mockito.when(itemMapper.toItemDto(item))
+        when(itemMapper.toItemDto(item))
                 .thenReturn(itemDto);
 
         ItemDto returnedItemDto = itemService.create(owner.getId(), itemDto);
@@ -175,16 +175,16 @@ class ItemServiceImplTest {
     @Test
     public void createSuccessfulWithRequest() {
 
-        Mockito.when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
 
-        Mockito.when(itemRequestRepository.findById(anyLong()))
+        when(itemRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(request));
 
-        Mockito.when(itemRepository.save(any()))
+        when(itemRepository.save(any()))
                 .thenReturn(item);
 
-        Mockito.when(itemMapper.toItemDto(item))
+        when(itemMapper.toItemDto(item))
                 .thenReturn(itemDto);
 
         ItemDto returnedItemDto = itemService.create(owner.getId(), itemDtoWithRequest);
@@ -202,7 +202,7 @@ class ItemServiceImplTest {
     @Test
     public void createFailRequestNotFound() {
 
-        Mockito.when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
 
         assertThrows(EntityNotFoundException.class,
@@ -225,19 +225,19 @@ class ItemServiceImplTest {
     @Test
     public void updateSuccessful() {
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
+        when(userRepository
+                        .existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
+        when(itemRepository
                         .findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(itemRepository
+        when(itemRepository
                         .save(any()))
                 .thenReturn(updatedItem);
 
-        Mockito.when(itemMapper
+        when(itemMapper
                         .toItemDto(updatedItem))
                 .thenReturn(updatedItemDto);
 
@@ -250,20 +250,16 @@ class ItemServiceImplTest {
     @Test
     public void updateSuccessfulWithSameItem() {
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(itemRepository
-                        .save(any()))
+        when(itemRepository.save(any()))
                 .thenReturn(item);
 
-        Mockito.when(itemMapper
-                        .toItemDto(item))
+        when(itemMapper.toItemDto(item))
                 .thenReturn(itemDto);
 
         ItemDto returnedItemDto = itemService.update(itemDto, item.getId(), owner.getId());
@@ -275,21 +271,16 @@ class ItemServiceImplTest {
     @Test
     public void updateSuccessfulWithEmptyFields() {
 
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
-
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(itemRepository
-                        .save(any()))
+        when(itemRepository.save(any()))
                 .thenReturn(updatedItem);
 
-        Mockito.when(itemMapper
-                        .toItemDto(updatedItem))
+        when(itemMapper.toItemDto(updatedItem))
                 .thenReturn(updatedItemDto);
 
         updatedItemDto.setName(null);
@@ -305,13 +296,10 @@ class ItemServiceImplTest {
 
     @Test
     public void updateFailInCauseOfNotOwner() {
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(user));
-
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
         assertThrows(ForbiddenOperationException.class,
@@ -328,9 +316,8 @@ class ItemServiceImplTest {
 
     @Test
     public void updateFailInCauseOfItemNotFound() {
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
         assertThrows(EntityNotFoundException.class,
                 () -> itemService.update(updatedItemDto, item.getId(), user.getId()));
@@ -339,24 +326,19 @@ class ItemServiceImplTest {
     @Test
     public void findItemByIdByUserSuccessful() {
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(commentRepository
-                        .findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(commentMapper
-                        .commentDtoList(anyList()))
+        when(commentMapper.commentDtoList(anyList()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingComment(item))
+        when(itemMapper.toItemDtoBookingComment(item))
                 .thenReturn(itemBookingCommentDto);
 
         ItemBookingCommentDto returnedItemDto = itemService.findItemById(user.getId(), item.getId());
@@ -368,28 +350,22 @@ class ItemServiceImplTest {
     @Test
     public void findItemByIdByOwnerSuccessful() {
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(bookingRepository
-                        .findByItemId(anyLong()))
+        when(bookingRepository.findByItemId(anyLong()))
                 .thenReturn(bookings);
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(commentRepository
-                        .findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(commentMapper
-                        .commentDtoList(anyList()))
+        when(commentMapper.commentDtoList(anyList()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingComment(item))
+        when(itemMapper.toItemDtoBookingComment(item))
                 .thenReturn(itemBookingCommentDto);
 
 
@@ -402,30 +378,23 @@ class ItemServiceImplTest {
     @Test
     public void findItemByIdByOwnerSuccessfulWithoutBookings() {
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(bookingRepository
-                        .findByItemId(anyLong()))
+        when(bookingRepository.findByItemId(anyLong()))
                 .thenReturn(List.of());
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(commentRepository
-                        .findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(commentMapper
-                        .commentDtoList(anyList()))
+        when(commentMapper.commentDtoList(anyList()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingComment(item))
+        when(itemMapper.toItemDtoBookingComment(item))
                 .thenReturn(itemBookingCommentDto);
-
 
         ItemBookingCommentDto returnedItemDto = itemService.findItemById(owner.getId(), item.getId());
 
@@ -435,30 +404,23 @@ class ItemServiceImplTest {
     @Test
     public void findItemByIdByOwnerSuccessfulWithoutNextBooking() {
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(bookingRepository
-                        .findByItemId(anyLong()))
+        when(bookingRepository.findByItemId(anyLong()))
                 .thenReturn(List.of(lastBooking));
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(commentRepository
-                        .findAllByItemId(anyLong()))
+        when(commentRepository.findAllByItemId(anyLong()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(commentMapper
-                        .commentDtoList(anyList()))
+        when(commentMapper.commentDtoList(anyList()))
                 .thenReturn(new ArrayList<>());
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingComment(item))
+        when(itemMapper.toItemDtoBookingComment(item))
                 .thenReturn(itemBookingCommentDto);
-
 
         ItemBookingCommentDto returnedItemDto = itemService.findItemById(owner.getId(), item.getId());
 
@@ -475,7 +437,7 @@ class ItemServiceImplTest {
     @Test
     public void findItemByIdFailUserNotFound() {
 
-        Mockito.when(itemRepository
+        when(itemRepository
                         .findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
@@ -488,24 +450,19 @@ class ItemServiceImplTest {
         Integer from = 0;
         Integer size = 4;
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
-                        .findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
+        when(itemRepository.findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
                 .thenReturn(List.of(item));
 
-        Mockito.when(bookingRepository
-                        .findByItemIdList(anyList()))
+        when(bookingRepository.findByItemIdList(anyList()))
                 .thenReturn(bookings);
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingCommentList(anyList()))
+        when(itemMapper.toItemDtoBookingCommentList(anyList()))
                 .thenReturn(List.of(itemBookingCommentDto));
 
-        Mockito.when(bookingMapper
-                        .toBookingDtoForItemHost(any()))
+        when(bookingMapper.toBookingDtoForItemHost(any()))
                 .thenReturn(bookingDtoForItemOwner);
 
         List<ItemBookingCommentDto> returnedItemDto = itemService.findOwnerItems(owner.getId(), from, size);
@@ -519,24 +476,19 @@ class ItemServiceImplTest {
         Integer from = 0;
         Integer size = 4;
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
-                        .findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
+        when(itemRepository.findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
                 .thenReturn(List.of(item));
 
-        Mockito.when(bookingRepository
-                        .findByItemIdList(anyList()))
+        when(bookingRepository.findByItemIdList(anyList()))
                 .thenReturn(List.of(lastBooking));
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingCommentList(anyList()))
+        when(itemMapper.toItemDtoBookingCommentList(anyList()))
                 .thenReturn(List.of(itemBookingCommentDto));
 
-        Mockito.when(bookingMapper
-                        .toBookingDtoForItemHost(any()))
+        when(bookingMapper.toBookingDtoForItemHost(any()))
                 .thenReturn(bookingDtoForItemOwner);
 
         List<ItemBookingCommentDto> returnedItemDto = itemService.findOwnerItems(owner.getId(), from, size);
@@ -549,12 +501,10 @@ class ItemServiceImplTest {
         Integer from = 0;
         Integer size = 4;
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
-                        .findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
+        when(itemRepository.findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
                 .thenReturn(List.of());
 
         List<ItemBookingCommentDto> returnedItemDto = itemService.findOwnerItems(owner.getId(), from, size);
@@ -567,20 +517,16 @@ class ItemServiceImplTest {
         Integer from = 0;
         Integer size = 4;
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
-                .thenReturn(Optional.of(owner));
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
 
-        Mockito.when(itemRepository
-                        .findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
+        when(itemRepository.findAllByOwnerIdOrderByIdAsc(anyLong(), any()))
                 .thenReturn(List.of(item));
 
-        Mockito.when(bookingRepository
-                        .findByItemIdList(anyList()))
+        when(bookingRepository.findByItemIdList(anyList()))
                 .thenReturn(List.of());
 
-        Mockito.when(itemMapper
-                        .toItemDtoBookingCommentList(anyList()))
+        when(itemMapper.toItemDtoBookingCommentList(anyList()))
                 .thenReturn(List.of(itemBookingCommentDto));
 
         List<ItemBookingCommentDto> returnedItemDto = itemService.findOwnerItems(owner.getId(), from, size);
@@ -594,7 +540,6 @@ class ItemServiceImplTest {
         Integer size = 4;
         assertThrows(EntityNotFoundException.class,
                 () -> itemService.findOwnerItems(owner.getId(), from, size));
-
     }
 
     @Test
@@ -603,11 +548,11 @@ class ItemServiceImplTest {
         Integer from = 0;
         Integer size = 4;
 
-        Mockito.when(itemRepository
+        when(itemRepository
                         .findItemsByTextIgnoreCase(anyString(), any()))
                 .thenReturn(List.of(item));
 
-        Mockito.when(itemMapper
+        when(itemMapper
                         .itemDtoList(anyList()))
                 .thenReturn(List.of(itemDto));
 
@@ -631,28 +576,22 @@ class ItemServiceImplTest {
     @Test
     public void addCommentSuccessful() {
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
 
-        Mockito.when(bookingRepository
-                        .findAllCompletedBookingsByBookerIdAndItemId(anyLong(), anyLong(), any(LocalDateTime.class)))
+        when(bookingRepository.findAllCompletedBookingsByBookerIdAndItemId(anyLong(), anyLong(), any(LocalDateTime.class)))
                 .thenReturn(List.of(booking));
 
-        Mockito.when(commentMapper
-                        .dtoToComment(commentDtoInput))
+        when(commentMapper.dtoToComment(commentDtoInput))
                 .thenReturn(comment);
 
-        Mockito.when(commentRepository
-                        .save(comment))
+        when(commentRepository.save(comment))
                 .thenReturn(comment);
 
-        Mockito.when(commentMapper
-                        .toCommentDto(comment))
+        when(commentMapper.toCommentDto(comment))
                 .thenReturn(commentDtoOutput);
 
         CommentDtoOutput returnedCommentDto = itemService.addComment(user.getId(), item.getId(), commentDtoInput);
@@ -672,26 +611,22 @@ class ItemServiceImplTest {
     @Test
     public void addCommentFailInCauseNoBooker() {
 
-        Mockito.when(itemRepository
-                        .findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        Mockito.when(userRepository
-                        .findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
 
-        Mockito.when(bookingRepository
-                        .findAllCompletedBookingsByBookerIdAndItemId(anyLong(), anyLong(), any(LocalDateTime.class)))
+        when(bookingRepository.findAllCompletedBookingsByBookerIdAndItemId(anyLong(), anyLong(), any(LocalDateTime.class)))
                 .thenReturn(List.of());
 
         assertThrows(ValidationExceptionCustom.class,
                 () -> itemService.addComment(owner.getId(), item.getId(), commentDtoInput));
-
     }
 
     @Test
     public void addCommentFailInCauseOfNoUser() {
-        Mockito.when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
         assertThrows(EntityNotFoundException.class,

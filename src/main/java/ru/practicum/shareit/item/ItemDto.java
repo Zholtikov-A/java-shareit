@@ -15,16 +15,12 @@ import javax.validation.constraints.NotNull;
 
 public class ItemDto {
 
-    public interface Create {
-    }
-
     Long id;
-    @NotBlank(groups = {Create.class})
+    @NotBlank
     String name;
-    @NotBlank(groups = {Create.class})
+    @NotBlank
     String description;
-
-    @NotNull(groups = {Create.class})
+    @NotNull
     Boolean available;
 
     Long requestId;
