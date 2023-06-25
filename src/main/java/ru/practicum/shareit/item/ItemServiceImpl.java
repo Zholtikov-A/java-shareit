@@ -3,6 +3,9 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.Booking;
@@ -11,6 +14,8 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.exception.ForbiddenOperationException;
 import ru.practicum.shareit.exception.ValidationExceptionCustom;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -30,27 +35,32 @@ public class ItemServiceImpl implements ItemService {
     UserRepository userRepository;
     BookingRepository bookingRepository;
     CommentRepository commentRepository;
+    ItemRequestRepository itemRequestRepository;
 
     ItemMapper itemMapper;
     BookingMapper bookingMapper;
     CommentMapper commentMapper;
 
     public ItemDto create(Long ownerId, @Valid ItemDto itemDto) {
-        Optional<User> optionalOwner = userRepository.findById(ownerId);
-        if (optionalOwner.isPresent()) {
-            User owner = optionalOwner.get();
-            Item item = itemMapper.toItem(itemDto, owner);
-            return itemMapper.toItemDto(itemRepository.save(item));
-        } else {
-            throw new EntityNotFoundException("Not found: item owner's id " + ownerId);
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + ownerId));
+        ItemRequest request = null;
+        if (itemDto.getRequestId() != null) {
+            request = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new EntityNotFoundException("Not found: request id: " + itemDto.getRequestId()));
         }
+        Item item = itemMapper.toItem(itemDto, owner, request);
+
+        return itemMapper.toItemDto(itemRepository.save(item));
+
     }
 
     public ItemDto update(ItemDto itemDto, Long itemId, Long ownerId) {
+        if (!userRepository.existsById(ownerId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + ownerId));
+        }
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
-        userRepository.findById(ownerId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: owner id: " + ownerId));
         itemDto.setId(itemId);
 
         if (item.getOwner() != null &&
@@ -78,14 +88,15 @@ public class ItemServiceImpl implements ItemService {
     public ItemBookingCommentDto findItemById(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
 
         List<CommentDtoOutput> itemComments = commentMapper.commentDtoList(commentRepository.findAllByItemId(itemId));
         ItemBookingCommentDto itemDto = itemMapper.toItemDtoBookingComment(item);
         itemDto.setComments(itemComments);
         if (item.getOwner().getId().equals(userId)) {
-            List<Booking> bookings = bookingRepository.findAllBookingsByItemId(itemId);
+            List<Booking> bookings = bookingRepository.findByItemId(itemId);
             if (!bookings.isEmpty()) {
                 List<Booking> lastBookings = bookings.stream()
                         .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
@@ -108,16 +119,20 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemBookingCommentDto> findOwnerItems(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
-        List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+    public List<ItemBookingCommentDto> findOwnerItems(Long userId, Integer from, Integer size) {
+        if (!userRepository.existsById(userId)) {
+            throw (new EntityNotFoundException("Not found: owner id: " + userId));
+        }
+        int page = from / size;
+        Pageable params = PageRequest.of(page, size, Sort.by("id"));
+
+        List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, params);
         if (userItems.isEmpty()) {
             return new ArrayList<ItemBookingCommentDto>();
         }
 
         List<Long> itemsId = userItems.stream().map(Item::getId).collect(Collectors.toList());
-        List<Booking> bookings = bookingRepository.findAllBookingsByItemIdList(itemsId);
+        List<Booking> bookings = bookingRepository.findByItemIdList(itemsId);
 
         if (bookings.isEmpty()) {
             return itemMapper.toItemDtoBookingCommentList(userItems);
@@ -146,22 +161,27 @@ public class ItemServiceImpl implements ItemService {
         return dtoItems;
     }
 
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, Integer from, Integer size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        List<Item> items = itemRepository.findItemsByTextIgnoreCase(text.toLowerCase());
+        int page = from / size;
+        Pageable params = PageRequest.of(page, size, Sort.by("id"));
+        List<Item> items = itemRepository.findItemsByTextIgnoreCase(text, params);
         return itemMapper.itemDtoList(items);
     }
 
     @Override
     public CommentDtoOutput addComment(Long userId, Long itemId, CommentDtoInput dtoInput) {
-
+        if (dtoInput.getText().isBlank()) {
+            throw new ValidationExceptionCustom("Comment can't be empty!");
+        }
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: item's id " + itemId));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + userId));
-        List<Booking> booking = bookingRepository.findAllByBookerIdAndItemIdAndEndBefore(itemId, userId, LocalDateTime.now());
+        List<Booking> booking = bookingRepository.findAllCompletedBookingsByBookerIdAndItemId(
+                userId, itemId, LocalDateTime.now());
 
         if (booking.isEmpty()) {
             throw new ValidationExceptionCustom("User hasn't booked this item");

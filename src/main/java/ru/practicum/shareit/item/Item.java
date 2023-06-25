@@ -9,7 +9,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "items", schema = "shareit")
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -34,9 +36,7 @@ public class Item {
     @ToString.Exclude
     User owner;
 
-
     @OneToOne
-    @Transient
     ItemRequest request;
 
 }

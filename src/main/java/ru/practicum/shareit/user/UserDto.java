@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -19,7 +20,9 @@ public class UserDto {
     }
 
     Long id;
+    @NotBlank(groups = {UserDto.Create.class})
     String name;
     @Email(groups = {UserDto.Create.class, UserDto.Update.class})
+    @NotBlank(groups = {UserDto.Create.class})
     String email;
 }

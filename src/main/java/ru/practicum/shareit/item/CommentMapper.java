@@ -4,10 +4,12 @@ package ru.practicum.shareit.item;
 import lombok.Data;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.annotations.Generated;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Generated
 @Component
 @Data
 public class CommentMapper {

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.annotations.Generated;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.user.User;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.user.UserMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Generated
 @Component
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
