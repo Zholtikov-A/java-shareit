@@ -1,12 +1,11 @@
 package ru.practicum.shareit.gateway.booking;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.gateway.booking.dto.BookItemRequestDto;
+import ru.practicum.shareit.gateway.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.gateway.booking.dto.BookingState;
 
 import javax.validation.Valid;
@@ -43,8 +42,8 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> bookItem(@RequestHeader(HEADER_SHARER) long userId,
-                                           @RequestBody @Valid BookItemRequestDto requestDto) {
-        return bookingClient.bookItem(userId, requestDto);
+                                           @RequestBody @Valid BookingDtoInput dtoInput) {
+        return bookingClient.bookItem(userId, dtoInput);
     }
 
     @GetMapping("/{bookingId}")

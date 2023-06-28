@@ -3,18 +3,14 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Validated
 public class ItemController {
 
     private static final String HEADER_SHARER = "X-Sharer-User-Id";
@@ -22,7 +18,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@RequestHeader(HEADER_SHARER) Long ownerId,
-                          @Validated @RequestBody ItemDto itemDto) {
+                          @RequestBody ItemDto itemDto) {
         return itemService.create(ownerId, itemDto);
     }
 
@@ -42,21 +38,21 @@ public class ItemController {
 
     @GetMapping
     public List<ItemBookingCommentDto> findAll(@RequestHeader(HEADER_SHARER) Long ownerId,
-                                               @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                               @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+                                               @RequestParam(value = "from") Integer from,
+                                               @RequestParam(value = "size") Integer size) {
         return itemService.findOwnerItems(ownerId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam("text") String subString,
-                                @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+                                @RequestParam(value = "from") Integer from,
+                                @RequestParam(value = "size") Integer size) {
         return itemService.search(subString, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDtoOutput addCommentToItem(@RequestHeader(HEADER_SHARER) Long userId, @PathVariable Long itemId,
-                                             @Validated @RequestBody CommentDtoInput dtoInput) {
+                                             @RequestBody CommentDtoInput dtoInput) {
         return itemService.addComment(userId, itemId, dtoInput);
     }
 

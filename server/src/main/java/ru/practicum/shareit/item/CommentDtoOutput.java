@@ -13,11 +13,8 @@ import java.time.LocalDateTime;
 public class CommentDtoOutput {
 
     Long id;
-
     String text;
-
     String authorName;
-
     LocalDateTime created;
 
 }

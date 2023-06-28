@@ -13,10 +13,7 @@ import java.time.LocalDateTime;
 public class BookingDtoForItemOwner {
 
     Long id;
-
     LocalDateTime start;
-
     LocalDateTime end;
-
     Long bookerId;
 }

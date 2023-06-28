@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.gateway.item.dto.ItemResponseDto;
 import ru.practicum.shareit.gateway.user.dto.UserDto;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
