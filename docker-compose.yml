@@ -18,13 +18,13 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - db_postgres
+      - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit_postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=iamroot
 
-  db_postgres:
+  db:
     image: postgres:13.7-alpine
     volumes:
       - /var/lib/postgresql/data/
