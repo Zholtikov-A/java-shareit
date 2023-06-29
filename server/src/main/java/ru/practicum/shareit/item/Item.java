@@ -6,8 +6,6 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -23,12 +21,10 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank
     String name;
-    @NotBlank
+
     String description;
 
-    @NotNull
     @Column(name = "is_available")
     Boolean available;
 

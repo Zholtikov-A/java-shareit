@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.ItemResponseDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     ItemRequestMapper itemRequestMapper;
 
     @Override
-    public ItemRequestDtoOutput create(Long requesterId, @Valid ItemRequestDtoInput itemRequestDtoInput) {
+    public ItemRequestDtoOutput create(Long requesterId, ItemRequestDtoInput itemRequestDtoInput) {
         User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + requesterId));
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(itemRequestDtoInput, requester);

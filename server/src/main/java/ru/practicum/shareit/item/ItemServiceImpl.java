@@ -19,7 +19,6 @@ import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,7 +41,7 @@ public class ItemServiceImpl implements ItemService {
     BookingMapper bookingMapper;
     CommentMapper commentMapper;
 
-    public ItemDto create(Long ownerId, @Valid ItemDto itemDto) {
+    public ItemDto create(Long ownerId, ItemDto itemDto) {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found: user id: " + ownerId));
         ItemRequest request = null;

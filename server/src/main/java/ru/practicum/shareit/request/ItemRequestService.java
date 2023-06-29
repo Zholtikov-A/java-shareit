@@ -1,11 +1,10 @@
 package ru.practicum.shareit.request;
 
-import javax.validation.Valid;
 import java.util.List;
 
 public interface ItemRequestService {
 
-    ItemRequestDtoOutput create(Long requesterId, @Valid ItemRequestDtoInput itemRequestDtoInput);
+    ItemRequestDtoOutput create(Long requesterId, ItemRequestDtoInput itemRequestDtoInput);
 
     List<ItemRequestDtoOutput> findUserRequests(Long userId, Integer from, Integer size);
 
