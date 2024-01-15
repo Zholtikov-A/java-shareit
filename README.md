@@ -50,7 +50,6 @@
 ## Testing
 
 * Postman tests collection: postman/ShareItPostmanTests.json
-* JUnit tests: server/src/test/java
 
 ## 🛠 Tech & Tools
 
